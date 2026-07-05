@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from database.database import get_db
 from models.user import User
+from utils.security import verify_password
 
 router = APIRouter()
 
@@ -26,7 +27,7 @@ def login(login: LoginRequest, db: Session = Depends(get_db)):
             "message": "Invalid email or password"
         }
 
-    if user.password != login.password:
+    if not verify_password(login.password, user.password):
         return {
             "success": False,
             "message": "Invalid email or password"

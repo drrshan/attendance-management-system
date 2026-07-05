@@ -1,6 +1,6 @@
 from database.database import SessionLocal
 from models.user import User
-
+from utils.security import hash_password
 db = SessionLocal()
 
 existing_user = db.query(User).filter(
@@ -14,7 +14,7 @@ else:
     admin = User(
         name="Administrator",
         email="admin@college.com",
-        password="admin123",
+        password=hash_password("admin123"),
         role="admin"
     )
 
