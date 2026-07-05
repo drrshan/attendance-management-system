@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import api from "../../services/api";
 
 function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,11 +17,17 @@ function Login() {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    console.log("Login Form Data:");
-    console.log(formData);
+  
+    try {
+      const response = await api.post("/login", formData);
+  
+      console.log("Response from Backend:");
+      console.log(response.data);
+    } catch (error) {
+      console.error("Login Error:", error);
+    }
   };
 
   return (
