@@ -9,6 +9,8 @@ function Login() {
     email: "",
     password: "",
   });
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleChange = (e) => {
     setFormData({
@@ -19,14 +21,25 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await api.post("/login", formData);
-  
-      console.log("Response from Backend:");
+
+      if (response.data.success) {
+        setIsSuccess(true);
+        setMessage(response.data.message);
+      } else {
+        setIsSuccess(false);
+        setMessage(response.data.message);
+      }
+
       console.log(response.data);
+
     } catch (error) {
-      console.error("Login Error:", error);
+      setIsSuccess(false);
+      setMessage("Unable to connect to the server.");
+
+      console.error(error);
     }
   };
 
@@ -40,7 +53,16 @@ function Login() {
         <p className="text-center text-gray-500 mt-2 mb-8">
           Welcome Back 👋
         </p>
-
+        {message && (
+          <div
+            className={`mb-6 rounded-lg p-3 text-center font-medium ${isSuccess
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+              }`}
+          >
+            {message}
+          </div>
+        )}
         <form onSubmit={handleSubmit}>
           {/* Email */}
           <div className="relative mb-5">

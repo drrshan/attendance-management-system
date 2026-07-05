@@ -39,7 +39,26 @@ def health():
 
 @app.post("/login")
 def login(login: LoginRequest):
+
+    demo_user = {
+        "email": "admin@college.com",
+        "password": "admin123"
+    }
+
+    if (
+        login.email == demo_user["email"]
+        and login.password == demo_user["password"]
+    ):
+        return {
+            "success": True,
+            "message": "Login Successful",
+            "user": {
+                "email": demo_user["email"],
+                "role": "admin"
+            }
+        }
+
     return {
-        "message": "Login request received successfully!",
-        "email": login.email
+        "success": False,
+        "message": "Invalid email or password"
     }
