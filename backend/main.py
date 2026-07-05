@@ -40,23 +40,38 @@ def health():
 @app.post("/login")
 def login(login: LoginRequest):
 
-    demo_user = {
-        "email": "admin@college.com",
-        "password": "admin123"
-    }
-
-    if (
-        login.email == demo_user["email"]
-        and login.password == demo_user["password"]
-    ):
-        return {
-            "success": True,
-            "message": "Login Successful",
-            "user": {
-                "email": demo_user["email"],
-                "role": "admin"
-            }
+    users = [
+        {
+            "email": "admin@college.com",
+            "password": "admin123",
+            "role": "admin"
+        },
+        {
+            "email": "faculty@college.com",
+            "password": "faculty123",
+            "role": "faculty"
+        },
+        {
+            "email": "student@college.com",
+            "password": "student123",
+            "role": "student"
         }
+    ]
+
+    for user in users:
+        if (
+            login.email == user["email"]
+            and login.password == user["password"]
+        ):
+            return {
+                "success": True,
+                "message": "Login Successful",
+                "user": {
+                    "email": user["email"],
+                    "role": user["role"]
+                },
+                "token": "demo-jwt-token"
+            }
 
     return {
         "success": False,
