@@ -1,5 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from database.database import get_db
+from models.user import User
 
 router = APIRouter()
 
@@ -10,42 +14,30 @@ class LoginRequest(BaseModel):
 
 
 @router.post("/login")
-def login(login: LoginRequest):
+def login(login: LoginRequest, db: Session = Depends(get_db)):
 
-    users = [
-        {
-            "email": "admin@college.com",
-            "password": "admin123",
-            "role": "admin"
-        },
-        {
-            "email": "faculty@college.com",
-            "password": "faculty123",
-            "role": "faculty"
-        },
-        {
-            "email": "student@college.com",
-            "password": "student123",
-            "role": "student"
+    user = db.query(User).filter(
+        User.email == login.email
+    ).first()
+
+    if not user:
+        return {
+            "success": False,
+            "message": "Invalid email or password"
         }
-    ]
 
-    for user in users:
-        if (
-            login.email == user["email"]
-            and login.password == user["password"]
-        ):
-            return {
-                "success": True,
-                "message": "Login Successful",
-                "user": {
-                    "email": user["email"],
-                    "role": user["role"]
-                },
-                "token": "demo-jwt-token"
-            }
+    if user.password != login.password:
+        return {
+            "success": False,
+            "message": "Invalid email or password"
+        }
 
     return {
-        "success": False,
-        "message": "Invalid email or password"
+        "success": True,
+        "message": "Login Successful",
+        "user": {
+            "email": user.email,
+            "role": user.role
+        },
+        "token": "demo-jwt-token"
     }
